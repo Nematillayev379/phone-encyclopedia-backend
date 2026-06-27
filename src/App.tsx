@@ -17,10 +17,6 @@ const WALLPAPERS = [
   '/tech6.jpg',
 ];
 
-function keepalive() {
-  fetch('/api/brands').catch(() => {});
-}
-
 export default function App() {
   const idxRef = useRef(0);
 
@@ -40,12 +36,6 @@ export default function App() {
       }, 800);
     }, 35000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    keepalive();
-    const id = setInterval(keepalive, 5 * 60 * 1000);
-    return () => clearInterval(id);
   }, []);
 
   return (
