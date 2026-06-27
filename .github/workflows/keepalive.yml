@@ -1,0 +1,13 @@
+name: Backend Keepalive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render backend
+        run: curl -s -o /dev/null -w "%{http_code}" https://phone-encyclopedia-backend.onrender.com/api/brands

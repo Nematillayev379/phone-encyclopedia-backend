@@ -317,5 +317,16 @@ app.get('/api/top-by-interest', async (req, res) => {
   }
 });
 
+// ===== KEEPALIVE (self-ping to prevent Render sleep) =====
+const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 3001}`;
+setInterval(async () => {
+  try {
+    const res = await fetch(`${SELF_URL}/api/brands`, { signal: AbortSignal.timeout(5000) });
+    console.log(`[keepalive] ping OK (${res.status})`);
+  } catch {
+    console.log('[keepalive] ping failed (expected during cold start)');
+  }
+}, 8 * 60 * 1000);
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
