@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "PhonePedia"
+  },
+  "nav": {
+    "home": "Главная",
+    "catalog": "Каталог",
+    "compare": "Сравнение",
+    "quiz": "Тест"
+  },
+  "home": {
+    "title": "Найдите Идеальный",
+    "description": "Сравните более 100 000 телефонов всех ведущих брендов. Реальные данные, реальные характеристики.",
+    "startQuiz": "Начать Тест",
+    "viewCatalog": "Перейти в Каталог",
+    "topPhones": "Популярные Телефоны",
+    "latestPhones": "Новинки",
+    "allBrands": "Все Бренды",
+    "dashboard": "Панель Управления",
+    "phonesFrom": "телефонов из",
+    "brandsCount": "брендов",
+    "phonesCount": "+ телефонов",
+    "tabAll": "Все",
+    "tabBrands": "Бренды",
+    "viewDetails": "Подробнее",
+    "searchPlaceholder": "Поиск телефонов...",
+    "search": "Поиск",
+    "noResults": "Ничего не найдено",
+    "dataFrom": "Данные с GSMArena"
+  },
+  "catalog": {
+    "title": "Каталог Телефонов",
+    "allBrands": "Все Бренды",
+    "view": "Просмотр",
+    "noPhones": "Телефоны этого бренда не найдены"
+  },
+  "compare": {
+    "title": "Сравнение Телефонов",
+    "addPhone": "Добавить Телефон",
+    "empty": "Выберите телефоны для сравнения",
+    "emptyDesc": "Поищите и добавьте телефоны для сравнения",
+    "spec": "Характеристика",
+    "overview": "Обзор",
+    "add": "Добавить",
+    "maxPhones": "телефонов для сравнения бок о бок"
+  },
+  "quiz": {
+    "title": "Тест",
+    "subtitle": "Найдите идеальный телефон",
+    "next": "Далее",
+    "prev": "Назад",
+    "finish": "Получить Результат",
+    "question": "Вопрос",
+    "result": {
+      "title": "Ваш Идеальный!",
+      "subtitle": "На основе ваших предпочтений, вот наши рекомендации",
+      "recommended": "Рекомендуем для вас",
+      "viewDetails": "Подробнее",
+      "tryAgain": "Попробовать Снова"
+    }
+  },
+  "phone": {
+    "specifications": "Характеристики",
+    "addToCompare": "Сравнить",
+    "viewOnGSMArena": "На GSMArena",
+    "display": "Экран",
+    "camera": "Камера",
+    "ram": "Оперативная память",
+    "chipset": "Чипсет"
+  },
+  "search": {
+    "placeholder": "Поиск телефонов...",
+    "noResults": "Ничего не найдено"
+  },
+  "common": {
+    "seeAll": "Все",
+    "loading": "Загрузка...",
+    "error": "Произошла ошибка",
+    "back": "Назад"
+  },
+  "footer": {
+    "copyright": "Все данные с GSMArena.com"
+  },
+  "language": "Язык",
+  "navigation": "Навигация",
+  "dataSource": "Источник данных"
+}

@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "PhonePedia"
+  },
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "compare": "Compare",
+    "quiz": "Quiz"
+  },
+  "home": {
+    "title": "Find Your Perfect Phone",
+    "description": "Compare 100,000+ phones from all major brands. Real data, real specs, real reviews.",
+    "startQuiz": "Start Quiz",
+    "viewCatalog": "View Catalog",
+    "topPhones": "Top Phones",
+    "latestPhones": "Latest Phones",
+    "allBrands": "All Brands",
+    "dashboard": "Dashboard",
+    "phonesFrom": "phones from",
+    "brandsCount": "brands",
+    "phonesCount": "+ phones",
+    "tabAll": "All",
+    "tabBrands": "Brands",
+    "viewDetails": "View details",
+    "searchPlaceholder": "Search phones...",
+    "search": "Search",
+    "noResults": "No results found",
+    "dataFrom": "Data from GSMArena"
+  },
+  "catalog": {
+    "title": "Phone Catalog",
+    "allBrands": "All Brands",
+    "view": "View",
+    "noPhones": "No phones found for this brand"
+  },
+  "compare": {
+    "title": "Compare Phones",
+    "addPhone": "Add Phone",
+    "empty": "Select phones to compare",
+    "emptyDesc": "Search and add phones to compare",
+    "spec": "Spec",
+    "overview": "Overview",
+    "add": "add",
+    "maxPhones": "phones side-by-side"
+  },
+  "quiz": {
+    "title": "Quiz",
+    "subtitle": "Find Your Perfect Phone",
+    "next": "Next",
+    "prev": "Back",
+    "finish": "Get Results",
+    "question": "Question",
+    "result": {
+      "title": "Your Perfect Phone!",
+      "subtitle": "Based on your preferences, here are our recommendations",
+      "recommended": "Recommended for you",
+      "viewDetails": "View Details",
+      "tryAgain": "Try Again"
+    }
+  },
+  "phone": {
+    "specifications": "Specifications",
+    "addToCompare": "Compare",
+    "viewOnGSMArena": "View on GSMArena",
+    "display": "Display",
+    "camera": "Camera",
+    "ram": "RAM",
+    "chipset": "Chipset"
+  },
+  "search": {
+    "placeholder": "Search phones...",
+    "noResults": "No results found"
+  },
+  "common": {
+    "seeAll": "See All",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "back": "Back"
+  },
+  "footer": {
+    "copyright": "All data from GSMArena.com"
+  },
+  "language": "Language",
+  "navigation": "Navigation",
+  "dataSource": "Data Source"
+}

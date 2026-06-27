@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "PhonePedia"
+  },
+  "nav": {
+    "home": "Bosh sahifa",
+    "catalog": "Katalog",
+    "compare": "Taqqoslash",
+    "quiz": "Test"
+  },
+  "home": {
+    "title": "Mukammal Toping",
+    "description": "Barcha yirik brendlarning 100,000+ telefonlarini taqqoslang. Haqiqiy ma'lumotlar, haqiqiy xususiyatlar.",
+    "startQuiz": "Testni Boshlash",
+    "viewCatalog": "Katalogga O'tish",
+    "topPhones": "Mashhur Telefonlar",
+    "latestPhones": "Eng Yangilar",
+    "allBrands": "Barcha Brendlar",
+    "dashboard": "Boshqaruv Paneli",
+    "phonesFrom": "dan telefonlar",
+    "brandsCount": "brendlar",
+    "phonesCount": "+ telefonlar",
+    "tabAll": "Hammasi",
+    "tabBrands": "Brendlar",
+    "viewDetails": "Batafsil",
+    "searchPlaceholder": "Telefon qidirish...",
+    "search": "Qidirish",
+    "noResults": "Natija topilmadi",
+    "dataFrom": "GSMArena dan ma'lumotlar"
+  },
+  "catalog": {
+    "title": "Telefonlar Katalogi",
+    "allBrands": "Barcha Brendlar",
+    "view": "Ko'rish",
+    "noPhones": "Bu bredda telefonlar topilmadi"
+  },
+  "compare": {
+    "title": "Telefonlarni Taqqoslash",
+    "addPhone": "Telefon Qo'shish",
+    "empty": "Taqqoslash uchun telefon tanlang",
+    "emptyDesc": "Telefonlarni qidiring va taqqoslash uchun qo'shing",
+    "spec": "Xususiyat",
+    "overview": "Umumiy ko'rinish",
+    "add": "Qo'shish",
+    "maxPhones": "ta telefongacha yonma-yon taqqoslang"
+  },
+  "quiz": {
+    "title": "Test",
+    "subtitle": "Mukammal telefoningizni toping",
+    "next": "Keyingi",
+    "prev": "Orqaga",
+    "finish": "Natijalarni Ko'rish",
+    "question": "Savol",
+    "result": {
+      "title": "Sizning Mukammalingiz!",
+      "subtitle": "Sizning afzaliklaringiz asosida quyidagi tavsiyalar",
+      "recommended": "Sizga tavsiya etiladi",
+      "viewDetails": "Batafsil Ko'rish",
+      "tryAgain": "Qayta Urinish"
+    }
+  },
+  "phone": {
+    "specifications": "Xususiyatlar",
+    "addToCompare": "Taqqoslash",
+    "viewOnGSMArena": "GSMArena da Ko'rish",
+    "display": "Ekran",
+    "camera": "Kamera",
+    "ram": "Operativ xotira",
+    "chipset": "Chipset"
+  },
+  "search": {
+    "placeholder": "Telefon qidirish...",
+    "noResults": "Hech narsa topilmadi"
+  },
+  "common": {
+    "seeAll": "Hammasi",
+    "loading": "Yuklanmoqda...",
+    "error": "Xatolik yuz berdi",
+    "back": "Orqaga"
+  },
+  "footer": {
+    "copyright": "Barcha ma'lumotlar GSMArena.com dan"
+  },
+  "language": "Til",
+  "navigation": "Navigatsiya",
+  "dataSource": "Ma'lumot manbai"
+}
