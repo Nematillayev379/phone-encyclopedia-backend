@@ -1,9 +1,15 @@
 import axios from 'axios';
 import type { Phone, PhoneDetail, Brand } from '../types/phone';
 
+import staticBrands from '../data/staticBrands.json';
+import staticBrandPhones from '../data/staticBrandPhones.json';
+import staticLatest from '../data/staticLatest.json';
+import staticTop from '../data/staticTop.json';
+import staticDetails from '../data/staticDetails.json';
+
 const api = axios.create({
   baseURL: '/api',
-  timeout: 10000,
+  timeout: 8000,
 });
 
 api.interceptors.response.use(
@@ -39,7 +45,6 @@ function setCache<T>(key: string, data: T): void {
       JSON.stringify({ data, timestamp: Date.now() })
     );
   } catch {
-    // Storage full, clear old data
     Object.keys(localStorage)
       .filter((k) => k.startsWith(CACHE_PREFIX))
       .slice(0, 50)
@@ -58,7 +63,7 @@ export async function getBrands(): Promise<Brand[]> {
     setCache(cacheKey, brands);
     return brands;
   } catch {
-    return [];
+    return staticBrands.data || staticBrands;
   }
 }
 
@@ -73,7 +78,8 @@ export async function getPhonesByBrand(brandSlug: string, page = 1): Promise<Pho
     setCache(cacheKey, phones);
     return phones;
   } catch {
-    return [];
+    const brandData = (staticBrandPhones as Record<string, { data: Phone[] }>)[brandSlug];
+    return brandData?.data || [];
   }
 }
 
@@ -88,7 +94,8 @@ export async function getPhoneDetail(slug: string): Promise<PhoneDetail | null> 
     setCache(cacheKey, phoneSpec);
     return phoneSpec as PhoneDetail;
   } catch {
-    return null;
+    const detail = (staticDetails as Record<string, { data: PhoneDetail }>)[slug];
+    return detail?.data || null;
   }
 }
 
@@ -103,7 +110,16 @@ export async function searchPhones(query: string): Promise<Phone[]> {
     setCache(cacheKey, phones);
     return phones;
   } catch {
-    return [];
+    const q = query.toLowerCase();
+    const allPhones: Phone[] = [];
+    for (const brandData of Object.values(staticBrandPhones) as { data: Phone[] }[]) {
+      for (const p of brandData.data || []) {
+        if (p.phone_name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)) {
+          allPhones.push(p);
+        }
+      }
+    }
+    return allPhones.slice(0, 20);
   }
 }
 
@@ -118,7 +134,7 @@ export async function getLatestPhones(): Promise<Phone[]> {
     setCache(cacheKey, phones);
     return phones;
   } catch {
-    return [];
+    return staticLatest.data || staticLatest;
   }
 }
 
@@ -133,6 +149,6 @@ export async function getTopPhones(): Promise<Phone[]> {
     setCache(cacheKey, phones);
     return phones;
   } catch {
-    return [];
+    return staticTop.data || staticTop;
   }
 }
