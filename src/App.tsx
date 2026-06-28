@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import './data/i18n';
 import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
@@ -17,24 +18,54 @@ const WALLPAPERS = [
   '/tech6.jpg',
 ];
 
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -12, transition: { duration: 0.2, ease: 'easeIn' } },
+};
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div key={location.pathname} variants={pageVariants} initial="initial" animate="animate" exit="exit">
+        <Routes location={location}>
+          <Route path="/" element={<Home />} />
+          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/phone/:slug" element={<PhoneDetail />} />
+          <Route path="/compare" element={<Compare />} />
+          <Route path="/quiz" element={<Quiz />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   const idxRef = useRef(0);
 
   useEffect(() => {
     const bg = document.querySelector('.app-bg') as HTMLElement;
-    const bgNext = document.querySelector('.app-bg-next') as HTMLElement;
-    if (!bg || !bgNext) return;
+    if (!bg) return;
 
-    const interval = setInterval(() => {
+    const transition = () => {
       idxRef.current = (idxRef.current + 1) % WALLPAPERS.length;
       const nextUrl = `url('${WALLPAPERS[idxRef.current]}')`;
-      bgNext.style.backgroundImage = nextUrl;
-      bgNext.style.opacity = '1';
+
+      // Fade out
+      bg.style.transition = 'opacity 0.4s ease';
+      bg.style.opacity = '0';
+
       setTimeout(() => {
+        // Swap image while hidden
         bg.style.backgroundImage = nextUrl;
-        bgNext.style.opacity = '0';
-      }, 800);
-    }, 35000);
+        // Fade in
+        bg.style.transition = 'opacity 0.6s ease';
+        bg.style.opacity = '1';
+      }, 450);
+    };
+
+    const interval = setInterval(transition, 35000);
     return () => clearInterval(interval);
   }, []);
 
@@ -42,16 +73,9 @@ export default function App() {
     <BrowserRouter>
       <div className="app-layout">
         <div className="app-bg" />
-        <div className="app-bg-next" />
         <Sidebar />
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/phone/:slug" element={<PhoneDetail />} />
-            <Route path="/compare" element={<Compare />} />
-            <Route path="/quiz" element={<Quiz />} />
-          </Routes>
+          <AnimatedRoutes />
         </main>
       </div>
     </BrowserRouter>

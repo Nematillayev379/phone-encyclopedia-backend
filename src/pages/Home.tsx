@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getBrands, searchPhones } from '../utils/api';
+import { motion } from 'framer-motion';
+import { getBrands, getLatestPhones, getTopPhones } from '../utils/api';
 import type { Phone, Brand } from '../types/phone';
 
 const PALETTE: Record<string, string> = {
@@ -13,82 +14,140 @@ const PALETTE: Record<string, string> = {
 
 function getInitials(n: string) { return n.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase(); }
 
+function StatCard({ value, label, delay }: { value: string | number; label: string; delay: number }) {
+  return (
+    <motion.div
+      className="stat-card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.4, ease: 'easeOut' }}
+    >
+      <div className="stat-value">{value}</div>
+      <div className="stat-label">{label}</div>
+    </motion.div>
+  );
+}
+
 export default function Home() {
   const { t } = useTranslation();
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [phones, setPhones] = useState<Phone[]>([]);
+  const [latest, setLatest] = useState<Phone[]>([]);
+  const [top, setTop] = useState<Phone[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.allSettled([getBrands(), searchPhones('Samsung')])
-      .then(([b, p]) => {
+    Promise.allSettled([getBrands(), getLatestPhones(), getTopPhones()])
+      .then(([b, l, tp]) => {
         if (b.status === 'fulfilled') setBrands(b.value);
-        if (p.status === 'fulfilled') setPhones(p.value.slice(0, 20));
+        if (l.status === 'fulfilled') setLatest(l.value.slice(0, 6));
+        if (tp.status === 'fulfilled') setTop(tp.value.slice(0, 6));
       })
       .finally(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return (
+      <div className="content-card">
+        <div className="content-header">
+          <div>
+            <h1>{t('home.dashboard')}</h1>
+          </div>
+        </div>
+        <div className="stats-grid">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="stat-card">
+              <div className="skeleton" style={{ height: 28, width: '50%', margin: '0 auto 8px' }} />
+              <div className="skeleton" style={{ height: 10, width: '60%', margin: '0 auto' }} />
+            </div>
+          ))}
+        </div>
+        <div className="featured-grid">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="featured-card">
+              <div className="skeleton" style={{ width: 80, height: 80, borderRadius: 12 }} />
+              <div className="skeleton" style={{ height: 12, width: '70%' }} />
+              <div className="skeleton" style={{ height: 10, width: '40%' }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const totalPhones = latest.length + top.length;
 
   return (
     <div className="content-card">
       <div className="content-header">
         <div>
           <h1>{t('home.dashboard')}</h1>
-          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>{brands.length} {t('home.brandsCount')} · {phones.length}{t('home.phonesCount')}</p>
+          <p className="subtitle">{brands.length} {t('home.brandsCount')} · {totalPhones}+ {t('home.phonesCount')}</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link to="/quiz" className="btn-green" style={{ textDecoration: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Link to="/quiz" className="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             {t('nav.quiz')}
           </Link>
-          <Link to="/catalog" className="btn-ghost" style={{ textDecoration: 'none' }}>
+          <Link to="/catalog" className="btn btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             {t('nav.catalog')}
           </Link>
         </div>
       </div>
 
+      <div className="stats-grid">
+        <StatCard value={brands.length} label={t('home.brandsCount')} delay={0.1} />
+        <StatCard value={`${totalPhones}+`} label={t('home.phonesCount')} delay={0.15} />
+        <StatCard value={top.length} label={t('home.tabPopular')} delay={0.2} />
+        <StatCard value="3" label={t('home.languages')} delay={0.25} />
+      </div>
+
       <div className="tabs">
-        <div className="tab active">{t('home.tabAll')} <span className="tab-count">{phones.length}</span></div>
+        <div className="tab active">{t('home.tabLatest')} <span className="tab-count">{latest.length}</span></div>
+        <div className="tab">{t('home.tabPopular')} <span className="tab-count">{top.length}</span></div>
         <div className="tab">{t('home.tabBrands')} <span className="tab-count">{brands.length}</span></div>
       </div>
 
-      <div style={{ padding: '0' }}>
-        {loading ? (
-          Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} style={{ padding: '14px 28px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 10 }} />
-              <div style={{ flex: 1 }}>
-                <div className="skeleton" style={{ height: 12, width: '40%', marginBottom: 6 }} />
-                <div className="skeleton" style={{ height: 10, width: '25%' }} />
-              </div>
-            </div>
-          ))
-        ) : phones.length === 0 ? (
-          <div className="empty-state">
-            <div className="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>{t('home.noResults')}</p>
-          </div>
-        ) : (
-          phones.map(phone => {
+      <div style={{ padding: '24px 32px 8px' }}>
+        <h3 style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginBottom: 16, fontFamily: "'DM Sans', system-ui, sans-serif", letterSpacing: '-0.01em' }}>
+          {t('home.tabLatest')}
+        </h3>
+        <div className="featured-grid" style={{ padding: 0 }}>
+          {latest.map(phone => {
             const c = PALETTE[phone.brand?.toLowerCase()] || '#22c55e';
             return (
-              <Link key={phone.slug} to={`/phone/${phone.slug}`} className="phone-row">
-                <div className="phone-name-cell">
-                  <div className={`phone-thumb ${phone.image ? 'has-img' : ''}`} style={phone.image ? {} : { background: c }}>
-                    {phone.image ? (
-                      <img src={phone.image} alt="" loading="lazy" onError={(e) => { const t = e.target as HTMLImageElement; t.style.display = 'none'; t.parentElement?.classList.remove('has-img'); t.parentElement!.style.background = c; }} />
-                    ) : <span className="initials-fallback">{getInitials(phone.brand || phone.phone_name)}</span>}
-                  </div>
-                  <div>
-                    <div className="phone-name">{phone.phone_name} <span className="dot" /></div>
-                  </div>
+              <Link key={phone.slug} to={`/phone/${phone.slug}`} className="featured-card">
+                <div className="thumb" style={{ width: 80, height: 80, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: phone.image ? 'transparent' : c }}>
+                  {phone.image ? (
+                    <img src={phone.image} alt="" className="thumb" style={{ width: '100%', height: '100%' }} loading="lazy" />
+                  ) : (
+                    <span style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{getInitials(phone.brand || phone.phone_name)}</span>
+                  )}
                 </div>
-                <div className="phone-meta">{phone.brand}</div>
-                <div className="phone-actions">{t('home.viewDetails')} &rarr;</div>
+                <div>
+                  <div className="name">{phone.phone_name}</div>
+                  <div className="brand">{phone.brand}</div>
+                </div>
               </Link>
             );
-          })
-        )}
+          })}
+        </div>
       </div>
+
+      {brands.length > 0 && (
+        <div style={{ padding: '24px 32px' }}>
+          <h3 style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginBottom: 16, fontFamily: "'DM Sans', system-ui, sans-serif", letterSpacing: '-0.01em' }}>
+            {t('home.tabBrands')}
+          </h3>
+          <div className="brand-grid" style={{ padding: 0 }}>
+            {brands.slice(0, 18).map(b => (
+              <Link key={b.slug} to={`/catalog?brand=${b.slug}`} className="brand-chip">
+                {b.brand_name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

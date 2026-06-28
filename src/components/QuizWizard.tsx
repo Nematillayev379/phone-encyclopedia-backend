@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { searchPhones } from '../utils/api';
 import type { Phone } from '../types/phone';
 
@@ -29,12 +30,12 @@ const Qs: Q[] = [
   { id: 'usecase', title: { uz: 'Maqsad?', ru: 'Цель?', en: 'Use case?' }, opts: [
     { label: { uz: 'Kundalik', ru: 'Ежедневно', en: 'Daily' }, value: 'daily' },
     { label: { uz: 'Kamera', ru: 'Камера', en: 'Camera' }, value: 'camera' },
-    { label: { uz: 'O\'yinlar', ru: 'Игры', en: 'Gaming' }, value: 'gaming' },
+    { label: { uz: "O'yinlar", ru: 'Игры', en: 'Gaming' }, value: 'gaming' },
     { label: { uz: 'Ish', ru: 'Работа', en: 'Work' }, value: 'work' },
   ]},
   { id: 'camera', title: { uz: 'Kamera ahamiyati?', ru: 'Важность камеры?', en: 'Camera importance?' }, opts: [
     { label: { uz: 'Eng yaxshisi kerak', ru: 'Нужна лучшая', en: 'Must have best' }, value: 'critical' },
-    { label: { uz: 'O\'rtacha', ru: 'Средне', en: 'Moderate' }, value: 'moderate' },
+    { label: { uz: "O'rtacha", ru: 'Средне', en: 'Moderate' }, value: 'moderate' },
     { label: { uz: 'Ahamiyatsiz', ru: 'Не важно', en: 'Not important' }, value: 'low' },
   ]},
   { id: 'battery', title: { uz: 'Batareya?', ru: 'Батарея?', en: 'Battery?' }, opts: [
@@ -42,9 +43,9 @@ const Qs: Q[] = [
     { label: { uz: '1 kun yetadi', ru: '1 дня хватит', en: '1 day is fine' }, value: 'moderate' },
     { label: { uz: 'Ahamiyatsiz', ru: 'Не важно', en: 'Not important' }, value: 'low' },
   ]},
-  { id: 'screen', title: { uz: 'Ekran o\'lchami?', ru: 'Размер экрана?', en: 'Screen size?' }, opts: [
+  { id: 'screen', title: { uz: "Ekran o'lchami?", ru: 'Размер экрана?', en: 'Screen size?' }, opts: [
     { label: { uz: 'Kichik (6" gacha)', ru: 'Маленький (до 6")', en: 'Small (under 6")' }, value: 'small' },
-    { label: { uz: 'O\'rtacha (6–6.5")', ru: 'Средний (6–6.5")', en: 'Medium (6–6.5")' }, value: 'medium' },
+    { label: { uz: "O'rtacha (6–6.5\")", ru: 'Средний (6–6.5")', en: 'Medium (6–6.5")' }, value: 'medium' },
     { label: { uz: 'Katta (6.5"+)', ru: 'Большой (6.5"+)', en: 'Large (6.5"+)' }, value: 'large' },
   ]},
   { id: 'os', title: { uz: 'Operatsion tizim?', ru: 'ОС?', en: 'OS?' }, opts: [
@@ -54,7 +55,7 @@ const Qs: Q[] = [
   ]},
   { id: 'perf', title: { uz: 'Tezlik?', ru: 'Скорость?', en: 'Performance?' }, opts: [
     { label: { uz: 'Flagman', ru: 'Флагман', en: 'Flagship' }, value: 'flagship' },
-    { label: { uz: 'O\'rtacha', ru: 'Средний', en: 'Mid-range' }, value: 'mid' },
+    { label: { uz: "O'rtacha", ru: 'Средний', en: 'Mid-range' }, value: 'mid' },
     { label: { uz: 'Asosiy', ru: 'Базовый', en: 'Basic' }, value: 'basic' },
   ]},
   { id: 'storage', title: { uz: 'Xotira?', ru: 'Память?', en: 'Storage?' }, opts: [
@@ -62,7 +63,7 @@ const Qs: Q[] = [
     { label: { uz: '256GB', ru: '256GB', en: '256GB' }, value: '256' },
     { label: { uz: '512GB+', ru: '512GB+', en: '512GB+' }, value: '512' },
   ]},
-  { id: 'water', title: { uz: 'Suv o\'tkazmaslik?', ru: 'Водозащита?', en: 'Water resistance?' }, opts: [
+  { id: 'water', title: { uz: "Suv o'tkazmaslik?", ru: 'Водозащита?', en: 'Water resistance?' }, opts: [
     { label: { uz: 'Shart', ru: 'Обязательно', en: 'Must have' }, value: 'must' },
     { label: { uz: 'Yaxshi', ru: 'Хорошо бы', en: 'Nice to have' }, value: 'nice' },
     { label: { uz: 'Ahamiyatsiz', ru: 'Не важно', en: 'Not important' }, value: 'no' },
@@ -72,7 +73,7 @@ const Qs: Q[] = [
     { label: { uz: 'Yaxshi', ru: 'Хорошо бы', en: 'Nice to have' }, value: 'nice' },
     { label: { uz: 'Ahamiyatsiz', ru: 'Не важно', en: 'Not important' }, value: 'no' },
   ]},
-  { id: 'refresh', title: { uz: 'Ekran yangilanishi?', ru: 'Частота экрана?', en: 'Refresh rate?' }, opts: [
+  { id: 'refresh', title: { uz: "Ekran yangilanishi?", ru: 'Частота экрана?', en: 'Refresh rate?' }, opts: [
     { label: { uz: '120Hz+', ru: '120Hz+', en: '120Hz+' }, value: 'high' },
     { label: { uz: '60Hz yetadi', ru: '60Hz хватит', en: '60Hz is fine' }, value: 'standard' },
     { label: { uz: 'Ahamiyatsiz', ru: 'Не важно', en: 'Not important' }, value: 'any' },
@@ -82,16 +83,16 @@ const Qs: Q[] = [
     { label: { uz: 'Klassik', ru: 'Классический', en: 'Classic' }, value: 'classic' },
     { label: { uz: 'Hashamatli', ru: 'Премиальный', en: 'Premium' }, value: 'premium' },
   ]},
-  { id: 'weight', title: { uz: 'Og\'irlik?', ru: 'Вес?', en: 'Weight?' }, opts: [
+  { id: 'weight', title: { uz: "Og'irlik?", ru: 'Вес?', en: 'Weight?' }, opts: [
     { label: { uz: 'Yengil', ru: 'Лёгкий', en: 'Light' }, value: 'light' },
-    { label: { uz: 'O\'rtacha', ru: 'Средний', en: 'Medium' }, value: 'medium' },
-    { label: { uz: 'Farqi yo\'q', ru: 'Не важно', en: 'Any' }, value: 'any' },
+    { label: { uz: "O'rtacha", ru: 'Средний', en: 'Medium' }, value: 'medium' },
+    { label: { uz: "Farqi yo'q", ru: 'Не важно', en: 'Any' }, value: 'any' },
   ]},
   { id: 'color', title: { uz: 'Rang?', ru: 'Цвет?', en: 'Color?' }, opts: [
     { label: { uz: 'Qora', ru: 'Чёрный', en: 'Black' }, value: 'dark' },
     { label: { uz: 'Oq', ru: 'Белый', en: 'White' }, value: 'light' },
     { label: { uz: 'Rangli', ru: 'Цветной', en: 'Colorful' }, value: 'colorful' },
-    { label: { uz: 'Farqi yo\'q', ru: 'Не важно', en: 'Any' }, value: 'any' },
+    { label: { uz: "Farqi yo'q", ru: 'Не важно', en: 'Any' }, value: 'any' },
   ]},
 ];
 
@@ -127,35 +128,38 @@ function QuizResult({ answers, onRetry }: { answers: Record<string, string[]>; o
   }, []);
 
   return (
-    <div className="content-card">
+    <motion.div className="content-card" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
       <div className="content-header">
-        <h1>{t('quiz.result.title')}</h1>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={onRetry} className="btn-ghost">{t('quiz.result.tryAgain')}</button>
-          <Link to="/catalog" className="btn-green" style={{ textDecoration: 'none' }}>{t('nav.catalog')}</Link>
+        <motion.h1 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }}>{t('quiz.result.title')}</motion.h1>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={onRetry} className="btn btn-ghost">{t('quiz.result.tryAgain')}</button>
+          <Link to="/catalog" className="btn btn-primary" style={{ textDecoration: 'none' }}>{t('nav.catalog')}</Link>
         </div>
       </div>
-      <div className="empty-state" style={{ paddingTop: 60, paddingBottom: 60 }}>
-        <div style={{ width: 48, height: 48, borderRadius: 14, background: 'rgba(34,197,94,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('quiz.result.recommended')}</p>
-        <h2 style={{ fontSize: 22, fontWeight: 600, color: '#fff', marginBottom: 20, fontFamily: 'Inter' }}>{rec}</h2>
+      <motion.div className="empty-state" style={{ paddingTop: 60, paddingBottom: 60 }}
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <motion.div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(34,197,94,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </motion.div>
+        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t('quiz.result.recommended')}</p>
+        <h2 style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 24, fontFamily: "'DM Sans', system-ui, sans-serif", letterSpacing: '-0.03em' }}>{rec}</h2>
         {loading ? (
-          <div className="skeleton" style={{ width: 160, height: 36, borderRadius: 10 }} />
+          <div className="skeleton" style={{ width: 180, height: 42, borderRadius: 12, margin: '0 auto' }} />
         ) : found ? (
-          <Link to={`/phone/${found.slug}`} className="btn-green" style={{ textDecoration: 'none' }}>
-            {t('quiz.result.viewDetails')}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </Link>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Link to={`/phone/${found.slug}`} className="btn btn-primary" style={{ textDecoration: 'none' }}>
+              {t('quiz.result.viewDetails')}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
+          </motion.div>
         ) : (
-          <Link to="/catalog" className="btn-green" style={{ textDecoration: 'none' }}>
+          <Link to="/catalog" className="btn btn-primary" style={{ textDecoration: 'none' }}>
             {t('nav.catalog')}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </Link>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -176,47 +180,54 @@ export default function QuizWizard() {
 
   const q = Qs[step];
   return (
-    <div className="content-card">
+    <motion.div className="content-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <div className="content-header">
         <div>
           <h1>{t('nav.quiz')}</h1>
-          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>{step + 1} of {total}</p>
+          <p className="subtitle">{step + 1} of {total}</p>
         </div>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#22c55e' }}>{Math.round(progress)}%</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 80, height: 4, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
+            <div className="progress-fill" style={{ width: `${progress}%` }} />
+          </div>
+          <span style={{ fontSize: 12, fontWeight: 600, color: '#22c55e', fontFamily: "'JetBrains Mono', monospace" }}>{Math.round(progress)}%</span>
+        </div>
       </div>
 
-      <div style={{ padding: '0 28px' }}>
-        <div className="progress-track" style={{ margin: '0 28px', marginTop: -1, position: 'relative', top: -1 }}>
-          <div className="progress-fill" style={{ width: `${progress}%` }} />
-        </div>
-      </div>
-
-      <div style={{ padding: '32px 28px' }}>
-        <p style={{ fontSize: 11, color: '#22c55e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-          Question {String(step + 1).padStart(2, '0')}
+      <div style={{ padding: '40px 32px' }}>
+        <p style={{ fontSize: 11, color: '#22c55e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+          {t('quiz.step')} {String(step + 1).padStart(2, '0')}
         </p>
-        <h2 style={{ fontSize: 22, fontWeight: 600, color: '#fff', marginBottom: 28, fontFamily: 'Inter' }}>{q.title[lang]}</h2>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {q.opts.map((opt) => {
-            const picked = (answers[q.id] || []).includes(opt.value);
-            return (
-              <button key={opt.value} onClick={() => toggle(opt.value)} className={`quiz-option ${picked ? 'selected' : ''}`}>
-                <div className="quiz-radio" />
-                <span style={{ fontSize: 14, fontWeight: 500, color: picked ? '#fff' : 'rgba(255,255,255,0.7)' }}>{opt.label[lang]}</span>
-              </button>
-            );
-          })}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 32, fontFamily: "'DM Sans', system-ui, sans-serif", letterSpacing: '-0.03em' }}>{q.title[lang]}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {q.opts.map((opt, oi) => {
+                const picked = (answers[q.id] || []).includes(opt.value);
+                return (
+                  <motion.button key={opt.value} onClick={() => toggle(opt.value)}
+                    className={`quiz-option ${picked ? 'selected' : ''}`}
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: oi * 0.05 }}>
+                    <div className="quiz-radio" />
+                    <span style={{ fontSize: 15, fontWeight: 500, color: picked ? '#fff' : 'rgba(255,255,255,0.7)' }}>{opt.label[lang]}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 28px 28px' }}>
-        <button onClick={() => setStep(s => s - 1)} disabled={step === 0} className="btn-ghost" style={{ opacity: step === 0 ? 0.3 : 1, cursor: step === 0 ? 'not-allowed' : 'pointer' }}>{t('quiz.prev')}</button>
-        <button onClick={() => setStep(s => s + 1)} disabled={!canNext} className="btn-green" style={{ opacity: canNext ? 1 : 0.3, cursor: canNext ? 'pointer' : 'not-allowed' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 32px 32px' }}>
+        <button onClick={() => setStep(s => s - 1)} disabled={step === 0} className="btn btn-ghost" style={{ opacity: step === 0 ? 0.3 : 1, cursor: step === 0 ? 'not-allowed' : 'pointer' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          {t('quiz.prev')}
+        </button>
+        <button onClick={() => setStep(s => s + 1)} disabled={!canNext} className="btn btn-primary" style={{ opacity: canNext ? 1 : 0.3, cursor: canNext ? 'pointer' : 'not-allowed' }}>
           {step === total - 1 ? t('quiz.finish') : t('quiz.next')}
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
