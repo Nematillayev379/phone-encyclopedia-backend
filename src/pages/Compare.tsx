@@ -27,8 +27,6 @@ function findWinners(vals: string[], specName: string): number[] {
   return nums.map((n, i) => n === best ? i : -1).filter(i => i >= 0);
 }
 
-const LOWER_BETTER_CATS = new Set(['Body', 'Battery']);
-
 const rowVariants = {
   hidden: { opacity: 0, x: -10 },
   show: (i: number) => ({ opacity: 1, x: 0, transition: { delay: i * 0.02 } })
@@ -61,10 +59,6 @@ export default function Compare() {
 
   const remove = (i: number) => setPhones(p => p.filter((_, idx) => idx !== i));
   const categories = Array.from(new Set(phones.flatMap(p => p.detailSpec?.map(s => s.category) || [])));
-
-  // Compute wins per phone across all spec rows
-  const winCounts: number[] = phones.map(() => 0);
-  const totalComparable: number[] = phones.map(() => 0);
 
   // We'll compute during render using a special function
   const computeWins = () => {

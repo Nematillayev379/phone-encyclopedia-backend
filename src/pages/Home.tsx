@@ -23,7 +23,7 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 
-function StatCard({ value, label, delay }: { value: string | number; label: string; delay: number }) {
+function StatCard({ value, label }: { value: string | number; label: string }) {
   const count = useMotionValue(0);
   const springValue = useSpring(count, { stiffness: 80, damping: 20 });
   const rounded = useTransform(springValue, (v) => Math.round(v));
@@ -115,10 +115,10 @@ export default function Home() {
       <div className="section-divider" />
 
       <motion.div className="stats-grid" variants={containerVariants} initial="hidden" animate="show">
-        <StatCard value={brands.length} label={t('home.brandsCount')} delay={0.1} />
-        <StatCard value={`${totalPhones}+`} label={t('home.phonesCount')} delay={0.15} />
-        <StatCard value={top.length} label={t('home.tabPopular')} delay={0.2} />
-        <StatCard value="3" label={t('home.languages')} delay={0.25} />
+        <StatCard value={brands.length} label={t('home.brandsCount')} />
+        <StatCard value={`${totalPhones}+`} label={t('home.phonesCount')} />
+        <StatCard value={top.length} label={t('home.tabPopular')} />
+        <StatCard value="3" label={t('home.languages')} />
       </motion.div>
 
       <div className="section-divider" />
