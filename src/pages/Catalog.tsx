@@ -13,6 +13,16 @@ const PALETTE: Record<string, string> = {
 };
 function getInitials(n: string) { return n.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase(); }
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0 },
+};
+
 export default function Catalog() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -47,7 +57,7 @@ export default function Catalog() {
     <div className="content-card">
       <div className="content-header">
         <div>
-          <h1>{t('nav.catalog')}</h1>
+          <h1 className="text-gradient">{t('nav.catalog')}</h1>
           <p className="subtitle">{phones.length} {t('home.phonesCount')} · {brands.length} {t('home.brandsCount')}</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -69,9 +79,9 @@ export default function Catalog() {
       </div>
 
       <div style={{ padding: '12px 32px', display: 'flex', gap: 6, overflowX: 'auto', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <button onClick={() => pickBrand('')} className={`filter-chip ${!brand ? 'active' : ''}`}>{t('home.tabAll')}</button>
+        <button onClick={() => pickBrand('')} className={`filter-chip ${!brand ? 'active glow-sm' : ''}`}>{t('home.tabAll')}</button>
         {brands.map(b => (
-          <button key={b.slug} onClick={() => pickBrand(b.slug)} className={`filter-chip ${brand === b.slug ? 'active' : ''}`}>{b.brand_name}</button>
+          <button key={b.slug} onClick={() => pickBrand(b.slug)} className={`filter-chip ${brand === b.slug ? 'active glow-sm' : ''}`}>{b.brand_name}</button>
         ))}
       </div>
 
@@ -80,17 +90,17 @@ export default function Catalog() {
           view === 'list' ? (
             Array.from({ length: 8 }).map((_, i) => (
               <div key={i} style={{ padding: '14px 32px', borderBottom: '1px solid rgba(255,255,255,0.03)', display: 'flex', gap: 14, alignItems: 'center' }}>
-                <div className="skeleton" style={{ width: 52, height: 52, borderRadius: 14 }} />
-                <div style={{ flex: 1 }}><div className="skeleton" style={{ height: 12, width: '40%', marginBottom: 6 }} /><div className="skeleton" style={{ height: 10, width: '25%' }} /></div>
+                <div className="skeleton-pulse" style={{ width: 52, height: 52, borderRadius: 14 }} />
+                <div style={{ flex: 1 }}><div className="skeleton-pulse" style={{ height: 12, width: '40%', marginBottom: 6 }} /><div className="skeleton-pulse" style={{ height: 10, width: '25%' }} /></div>
               </div>
             ))
           ) : (
             <div className="featured-grid">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="featured-card">
-                  <div className="skeleton" style={{ width: 80, height: 80, borderRadius: 12 }} />
-                  <div className="skeleton" style={{ height: 12, width: '70%' }} />
-                  <div className="skeleton" style={{ height: 10, width: '40%' }} />
+                <div key={i} className="catalog-card" style={{ gap: 10 }}>
+                  <div className="skeleton-pulse" style={{ width: 80, height: 80, borderRadius: 12 }} />
+                  <div className="skeleton-pulse" style={{ height: 12, width: '70%' }} />
+                  <div className="skeleton-pulse" style={{ height: 10, width: '40%' }} />
                 </div>
               ))}
             </div>
@@ -101,40 +111,53 @@ export default function Catalog() {
             <p>{t('home.noResults')}</p>
           </div>
         ) : view === 'list' ? (
-          phones.map((phone, idx) => {
-            const c = PALETTE[phone.brand?.toLowerCase()] || '#22c55e';
-            return (
-              <motion.div key={phone.slug} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}>
-                <Link to={`/phone/${phone.slug}`} className="phone-row">
-                  <div className="phone-name-cell">
-                    <div className={`phone-thumb ${phone.image ? 'has-img' : ''}`} style={phone.image ? {} : { background: c }}>
-                      {phone.image ? (
-                        <img src={phone.image} alt="" loading="lazy" onError={(e) => { const t = e.target as HTMLImageElement; t.style.display = 'none'; t.parentElement?.classList.remove('has-img'); t.parentElement!.style.background = c; }} />
-                      ) : <span className="initials-fallback">{getInitials(phone.brand || phone.phone_name)}</span>}
-                    </div>
-                    <div className="phone-name">{phone.phone_name}</div>
-                  </div>
-                  <div className="phone-meta">{phone.brand}</div>
-                  <div className="phone-actions">{t('home.viewDetails')} &rarr;</div>
-                </Link>
-              </motion.div>
-            );
-          })
-        ) : (
-          <div className="featured-grid">
+          <motion.div variants={containerVariants} initial="hidden" animate="visible">
             {phones.map(phone => {
               const c = PALETTE[phone.brand?.toLowerCase()] || '#22c55e';
               return (
-                <Link key={phone.slug} to={`/phone/${phone.slug}`} className="featured-card">
-                  <div className="thumb" style={{ width: 80, height: 80, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: phone.image ? 'transparent' : c }}>
-                    {phone.image ? <img src={phone.image} alt="" className="thumb" style={{ width: '100%', height: '100%' }} loading="lazy" /> : <span style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>{getInitials(phone.brand || phone.phone_name)}</span>}
-                  </div>
-                  <div className="name">{phone.phone_name}</div>
-                  <div className="brand">{phone.brand}</div>
-                </Link>
+                <motion.div key={phone.slug} variants={itemVariants}>
+                  <Link to={`/phone/${phone.slug}`} className="phone-row glow-sm">
+                    <div className="phone-name-cell">
+                      <div className={`phone-thumb ${phone.image ? 'has-img' : ''}`} style={phone.image ? {} : { background: c }}>
+                        {phone.image ? (
+                          <img src={phone.image} alt="" loading="lazy" onError={(e) => { const t = e.target as HTMLImageElement; t.style.display = 'none'; t.parentElement?.classList.remove('has-img'); t.parentElement!.style.background = c; }} />
+                        ) : <span className="initials-fallback">{getInitials(phone.brand || phone.phone_name)}</span>}
+                      </div>
+                      <div className="phone-name">{phone.phone_name}</div>
+                    </div>
+                    <div className="phone-meta">
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px',
+                        borderRadius: 6, fontSize: 10, fontWeight: 600, textTransform: 'uppercase',
+                        letterSpacing: '0.04em', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                      }}>{phone.brand}</span>
+                    </div>
+                    <div className="phone-actions">{t('home.viewDetails')} &rarr;</div>
+                  </Link>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
+        ) : (
+          <motion.div className="featured-grid" variants={containerVariants} initial="hidden" animate="visible">
+            {phones.map(phone => {
+              const c = PALETTE[phone.brand?.toLowerCase()] || '#22c55e';
+              return (
+                <motion.div key={phone.slug} variants={itemVariants}>
+                  <Link to={`/phone/${phone.slug}`} className="catalog-card">
+                    <div className="card-badge">
+                      <span className="badge badge-new">New</span>
+                    </div>
+                    <div className="thumb-wrap" style={{ background: phone.image ? 'transparent' : c }}>
+                      {phone.image ? <img src={phone.image} alt="" loading="lazy" /> : <span style={{ fontSize: 24, fontWeight: 700, color: '#fff' }}>{getInitials(phone.brand || phone.phone_name)}</span>}
+                    </div>
+                    <div className="card-name">{phone.phone_name}</div>
+                    <div className="card-brand">{phone.brand}</div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import { searchPhones } from '../utils/api';
 import type { Phone } from '../types/phone';
 
@@ -116,6 +117,17 @@ function QuizResult({ answers, onRetry }: { answers: Record<string, string[]>; o
   const rec = getRec(answers);
   const [found, setFound] = useState<Phone | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const duration = 2000;
+    const end = Date.now() + duration;
+    const frame = () => {
+      confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: ['#22c55e', '#4ade80', '#16a34a'] });
+      confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.6 }, colors: ['#22c55e', '#4ade80', '#16a34a'] });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    };
+    frame();
+  }, []);
 
   useEffect(() => {
     searchPhones(rec)

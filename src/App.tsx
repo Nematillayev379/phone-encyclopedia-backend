@@ -73,6 +73,7 @@ export default function App() {
     <BrowserRouter>
       <div className="app-layout">
         <div className="app-bg" />
+        <div className="ambient-glow" />
         <Sidebar />
         <main className="main-content">
           <AnimatedRoutes />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 export default function Sidebar() {
@@ -31,7 +32,7 @@ export default function Sidebar() {
       {open && <div className="mobile-overlay" onClick={() => setOpen(false)} />}
       <aside className={`sidebar ${open ? 'mobile-open' : ''}`}>
         <Link to="/" className="sidebar-logo" onClick={() => setOpen(false)}>
-          <div className="logo-icon">P</div>
+          <div className="logo-icon" style={{ boxShadow: '0 4px 20px rgba(34,197,94,0.4)' }}>P</div>
           <span>Phone Encyclopedia</span>
         </Link>
 
@@ -45,10 +46,24 @@ export default function Sidebar() {
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               onClick={() => setOpen(false)}
             >
-              <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d={n.icon} />
-              </svg>
-              {n.label}
+              {({ isActive }) => (
+                <>
+                  <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={n.icon} />
+                  </svg>
+                  {n.label}
+                  {isActive && (
+                    <motion.div layoutId="activeIndicator"
+                      style={{
+                        position: 'absolute', left: 0, top: '50%',
+                        width: 3, height: 20, borderRadius: '0 4px 4px 0',
+                        background: '#22c55e', transform: 'translateY(-50%)' as any,
+                        boxShadow: '0 0 12px rgba(34,197,94,0.4)',
+                      }}
+                    />
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </div>

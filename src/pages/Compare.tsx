@@ -29,6 +29,11 @@ function findWinners(vals: string[], specName: string): number[] {
 
 const LOWER_BETTER_CATS = new Set(['Body', 'Battery']);
 
+const rowVariants = {
+  hidden: { opacity: 0, x: -10 },
+  show: (i: number) => ({ opacity: 1, x: 0, transition: { delay: i * 0.02 } })
+};
+
 export default function Compare() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
@@ -37,6 +42,8 @@ export default function Compare() {
   const [results, setResults] = useState<Phone[]>([]);
   const [searching, setSearching] = useState(false);
   const [loadingPhone, setLoadingPhone] = useState(false);
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
+  const [hoveredResult, setHoveredResult] = useState<string | null>(null);
   const MAX = 4;
 
   const search = async (e: React.FormEvent) => {
@@ -96,7 +103,7 @@ export default function Compare() {
     <motion.div className="content-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <div className="content-header">
         <div>
-          <h1>{t('nav.compare')}</h1>
+          <h1 className="text-gradient">{t('nav.compare')}</h1>
           <p className="subtitle">{MAX} {t('compare.maxPhones')}</p>
         </div>
         {phones.length < MAX && (
@@ -116,7 +123,9 @@ export default function Compare() {
             const c = PALETTE[phone.brand?.toLowerCase()] || '#22c55e';
             return (
               <button key={phone.slug} onClick={() => add(phone)} disabled={loadingPhone}
-                className="phone-row" style={{ cursor: 'pointer', border: 'none', background: 'none', width: '100%', fontFamily: 'inherit', color: 'inherit' }}>
+                className={`phone-row${hoveredResult === phone.slug ? ' glow-sm' : ''}`} style={{ cursor: 'pointer', border: 'none', background: 'none', width: '100%', fontFamily: 'inherit', color: 'inherit' }}
+                onMouseEnter={() => setHoveredResult(phone.slug)}
+                onMouseLeave={() => setHoveredResult(null)}>
                 <div className="phone-name-cell" style={{ gap: 12 }}>
                   <div className="phone-thumb" style={{ background: c, width: 36, height: 36, borderRadius: 10 }}>{getInitials(phone.brand || phone.phone_name)}</div>
                   <span className="phone-name" style={{ fontSize: 12 }}>{phone.phone_name}</span>
@@ -155,6 +164,9 @@ export default function Compare() {
                 <div key={i}>
                   <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{phones[i].phone_name}</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#22c55e' }}>{cnt} / {totalComparableArr[i]} {t('compare.wins')}</div>
+                  <div className="spec-progress" style={{ width: 120, margin: '8px auto 0' }}>
+                    <div className="spec-progress-fill" style={{ width: `${((cnt / (totalComparableArr[i] || 1)) * 100)}%` }} />
+                  </div>
                 </div>
               ))}
               <div style={{ width: '100%', fontSize: 13, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
@@ -164,7 +176,7 @@ export default function Compare() {
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 14, background: PALETTE[phones[winnerIdx]?.brand?.toLowerCase()] || '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#fff' }}>
+              <div className="glow" style={{ width: 44, height: 44, borderRadius: 14, background: PALETTE[phones[winnerIdx]?.brand?.toLowerCase()] || '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#fff' }}>
                 {getInitials(phones[winnerIdx]?.brand || phones[winnerIdx]?.phone_name)}
               </div>
               <div style={{ textAlign: 'left' }}>
@@ -174,6 +186,9 @@ export default function Compare() {
                   {winCountsArr[winnerIdx]} / {totalComparableArr[winnerIdx]} {t('compare.wins')}
                   <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.15)' }}>·</span>
                   {((winCountsArr[winnerIdx] / (totalComparableArr[winnerIdx] || 1)) * 100).toFixed(0)}%
+                </div>
+                <div className="spec-progress" style={{ width: 120, margin: '8px auto 0' }}>
+                  <div className="spec-progress-fill" style={{ width: `${((winCountsArr[winnerIdx] / (totalComparableArr[winnerIdx] || 1)) * 100)}%` }} />
                 </div>
               </div>
               <div style={{ marginLeft: 16 }}>
@@ -210,15 +225,21 @@ export default function Compare() {
                 })}
               </tr>
             </thead>
-            <tbody>
+            <motion.tbody initial="hidden" animate="show">
               {phones[0]?.quickSpec && (
                 <>
-                  <tr className="cat-row"><td colSpan={phones.length + 1}>{t('compare.overview')}</td></tr>
+                  <tr className="cat-row"><td colSpan={phones.length + 1}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#22c55e" style={{ marginRight: 8, verticalAlign: 'middle' }}><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+                    {t('compare.overview')}
+                  </td></tr>
                   {Array.from({ length: Math.max(...phones.map(p => p.quickSpec?.length || 0)) }).map((_, qi) => {
                     const vals = phones.map(p => p.quickSpec?.[qi]?.value || '—');
                     const winners = findWinners(vals, phones[0]?.quickSpec?.[qi]?.name || '');
                     return (
-                      <tr key={`qs-${qi}`}>
+                      <motion.tr key={`qs-${qi}`} variants={rowVariants} custom={qi}
+                        style={{ background: hoveredRow === `qs-${qi}` ? 'rgba(255,255,255,0.02)' : 'transparent' }}
+                        onMouseEnter={() => setHoveredRow(`qs-${qi}`)}
+                        onMouseLeave={() => setHoveredRow(null)}>
                         <td style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 500, fontSize: 11 }}>{translateSpec(phones[0]?.quickSpec?.[qi]?.name || '', lang)}</td>
                         {phones.map((p, pi) => {
                           const isWin = winners.includes(pi);
@@ -229,20 +250,26 @@ export default function Compare() {
                             </td>
                           );
                         })}
-                      </tr>
+                      </motion.tr>
                     );
                   })}
                 </>
               )}
               {categories.flatMap(cat => [
                 <tr key={`cat-${cat}`} className="cat-row">
-                  <td colSpan={phones.length + 1}>{translateSpec(cat, lang)}</td>
+                  <td colSpan={phones.length + 1}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#22c55e" style={{ marginRight: 8, verticalAlign: 'middle' }}><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+                    {translateSpec(cat, lang)}
+                  </td>
                 </tr>,
                 ...Array.from({ length: Math.max(...phones.map(p => p.detailSpec?.find(s => s.category === cat)?.specifications.length || 0)) }).map((_, ii) => {
                   const vals = phones.map(p => p.detailSpec?.find(s => s.category === cat)?.specifications[ii]?.value || '—');
                   const winners = findWinners(vals, phones[0]?.detailSpec?.find(s => s.category === cat)?.specifications[ii]?.name || '');
                   return (
-                    <tr key={`${cat}-${ii}`}>
+                    <motion.tr key={`${cat}-${ii}`} variants={rowVariants} custom={ii}
+                      style={{ background: hoveredRow === `${cat}-${ii}` ? 'rgba(255,255,255,0.02)' : 'transparent' }}
+                      onMouseEnter={() => setHoveredRow(`${cat}-${ii}`)}
+                      onMouseLeave={() => setHoveredRow(null)}>
                       <td style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 500, fontSize: 11 }}>{translateSpec(phones[0]?.detailSpec?.find(s => s.category === cat)?.specifications[ii]?.name || '', lang)}</td>
                       {phones.map((p, pi) => {
                         const isWin = winners.includes(pi);
@@ -253,11 +280,11 @@ export default function Compare() {
                           </td>
                         );
                       })}
-                    </tr>
+                    </motion.tr>
                   );
                 }),
               ])}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       )}
